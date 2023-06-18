@@ -4,5 +4,10 @@ using UnityEngine;
 
 public interface IFactory
 {
-    public void CreateTile(TileTypes type){}
+    public ITile CreateTileModel();
+    public ITileView CreateTileView(GameObject tilePrefab, Transform parent);
+    public TilePresenter CreateTilePresenter(ITile tileModel, ITileView tileView);
+    public ITileLine CreateTileLineModel(List<Vector2> linePoints);
+    public ITileLineView CreateTileLineView(GameObject tileLinePrefab, Transform parent);
+    public TileLinePresenter CreateTileLinePresenter(ITileLine tileLineModel, ITileLineView tileLineView);
 }

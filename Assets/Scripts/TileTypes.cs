@@ -1,4 +1,9 @@
 public enum TileTypes
 {
-    GeneralTile
+    // GeneralTile
+    Star,
+    Hexagon,
+    Heart,
+    Gear,
+    None
 }

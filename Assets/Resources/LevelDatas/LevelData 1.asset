@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3673c8f35d3de5d47a41f17627b1c3e0, type: 3}
+  m_Name: LevelData 1
+  m_EditorClassIdentifier: 
+  layerDatas:
+  - tileDatas:
+    - position: {x: -2.5, y: 3}
+    - position: {x: -1.5, y: 3}
+    - position: {x: -0.5, y: 3}
+    - position: {x: 0.5, y: 3}
+    - position: {x: 1.5, y: 3}
+    - position: {x: 1.5, y: 0}
+  - tileDatas:
+    - position: {x: -2, y: 2.5}
+    - position: {x: -1, y: 2.5}
+    - position: {x: 0, y: 2.5}
+    - position: {x: 1, y: 2.5}
+    - position: {x: 2, y: 2.5}
+    - position: {x: 3, y: 2.5}
+  tileTypes: 00000000010000000200000003000000
