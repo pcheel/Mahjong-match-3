@@ -16,6 +16,7 @@ public class Tile : ITile
     public Vector2 position => _position;
     public List<ITile> topTiles => _topTiles;
     public TileTypes tileType => _type;
+    public bool isLocked => _isLocked;
     // public List<ITile> downTiles => _downTiles;
     public Action<Vector2, int, Sprite> InitializeAction {get;set;}
     public Action<bool> ChangeTopTilesCountAction {get;set;}
@@ -32,6 +33,7 @@ public class Tile : ITile
     {
         if (!_isLocked)
         {
+            _isLocked = true;
             DeleteTileFromDownTiles();
             bool isCorrect = _tileManager.AddTileToLine(this);
         }

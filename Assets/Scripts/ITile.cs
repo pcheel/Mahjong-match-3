@@ -13,6 +13,7 @@ public interface ITile
     // public List<ITile> downTiles {get;}
     public List<ITile> topTiles {get;}
     public TileTypes tileType {get;}
+    public bool isLocked {get;}
     public void Activate();
     public void Initialize(TileData data, int layer, TileTypes type, TileManager tileManager);
     public void SetTopTiles(List<ITile> topTiles);

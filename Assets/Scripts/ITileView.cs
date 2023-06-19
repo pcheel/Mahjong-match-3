@@ -9,5 +9,4 @@ public interface ITileView
     public void ChangeLockState(bool isLocked);
     public void MoveTileToNewPosition(Vector2 newPosition);
     public void DeleteTileView();
-    public void KillMoveTween();
 }

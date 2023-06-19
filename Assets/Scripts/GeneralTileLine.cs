@@ -50,6 +50,9 @@ public class GeneralTileLine : ITileLine
         for (int i = 0; i < _tilesInLine.Count; i++)
         {
             _tilesInLine[i].ChangePosition(_tilesPositions[i]);
+            // if (!_tilesInLine[i].isLocked)
+            // {
+            // }
         }
     }
 
@@ -98,7 +101,10 @@ public class GeneralTileLine : ITileLine
     }
     private void RemoveTile(ITile tile)
     {
-        Thread.Sleep(600);
+        // Thread.Sleep(500);
+        // tile.DeleteTileViewAction?.Invoke();
+
+        Thread.Sleep(1100);
         _tilesInLine.Remove(tile);
     }
     private void KillMovingTweens()
@@ -113,8 +119,8 @@ public class GeneralTileLine : ITileLine
         // await Task.Run( () => _tilesInLine.Remove(tile));
         await Task.Run(() => RemoveTile(tile));
         // DOTween.Kill()
-        // DOTween.KillAll();
-        DOTween.ClearCachedTweens();
+        DOTween.KillAll();
+        // DOTween.ClearCachedTweens();
         // KillMovingTweens();
         // DOTween.CompleteAll();
         SortingTilesInLine();

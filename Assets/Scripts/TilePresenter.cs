@@ -17,7 +17,7 @@ public class TilePresenter
         _tileView.TapOnTileAction += _tileModel.Activate;
         _tileModel.DeleteTileViewAction += _tileView.DeleteTileView;
         _tileView.DeleteTileAction += _tileModel.DeleteTile;
-        _tileModel.KillMovingTweensAction += _tileView.KillMoveTween;
+        // _tileModel.KillMovingTweensAction += _tileView.KillMoveTween;
     }
 
     private void OnEnable()
@@ -33,6 +33,6 @@ public class TilePresenter
         _tileView.TapOnTileAction -= _tileModel.Activate;
         _tileModel.DeleteTileViewAction -= _tileView.DeleteTileView;
         _tileView.DeleteTileAction -= _tileModel.DeleteTile;
-        _tileModel.KillMovingTweensAction -= _tileView.KillMoveTween;
+        // _tileModel.KillMovingTweensAction -= _tileView.KillMoveTween;
     }
 }

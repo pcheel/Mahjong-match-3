@@ -12,7 +12,7 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
     private SpriteRenderer _spriteRenderer;
     private SpriteRenderer _spriteRendererPanel;
     private TileAnimationQueue _tileAnimationQueue;
-    private Tween _movingTween;
+    // private List<Tween> _movingTweens;
 
     public Action TapOnTileAction {get;set;}
     public Action DeleteTileAction {get;set;}
@@ -39,7 +39,8 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
     }
     public void MoveTileToNewPosition(Vector2 newPosition)
     {
-        _movingTween = transform.DOLocalMove(newPosition, 0.5f);
+        transform.DOLocalMove(newPosition, 0.5f);
+        // _movingTweens.Add(transform.DOLocalMove(newPosition, 0.5f));
     }
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -47,36 +48,20 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
     }
     public void DeleteTileView()
     {
-        // _movingTween.Kill();
-        DOTween.Sequence().Append(transform.DOScale(1.2f, 0.3f)).Append(transform.DOScale(1.0f, 0.3f).OnComplete(()=>DeleteTile()));
-        // Destroy(this.gameObject);
+        StartCoroutine(DeleteTile());
+        // DOTween.Sequence().Append(transform.DOScale(1.2f, 0.3f).SetDelay(0.5f)).Append(transform.DOScale(1.0f, 0.3f).OnComplete(()=>DeleteTile()));
+        DOTween.Sequence().Append(transform.DOScale(1.2f, 0.3f).SetDelay(0.5f)).Append(transform.DOScale(1.0f, 0.3f));
     }
-    public void KillMoveTween()
+    
+    private IEnumerator DeleteTile()
     {
-        if (_movingTween != null)
-        {
-            _movingTween.Kill();
-            // DOTween.Kill(_movingTween);
-        }
-    }
-
-    private void DeleteTile()
-    {
-        // DeleteTileAction?.Invoke();
+        yield return new WaitForSeconds(1.1f);
         Destroy(this.gameObject);
     }
     private void Awake() 
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRendererPanel = _darkPanelGO.GetComponent<SpriteRenderer>();
+        // _movingTweens = new List<Tween>();
     }
-
-    // public void OnPointerEnter(PointerEventData eventData)
-    // {
-    //     Debug.Log("enter");
-    // }
-    // private void OnMouseDown()
-    // {
-    //     Debug.Log("click");
-    // }
 }
