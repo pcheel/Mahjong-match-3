@@ -26,10 +26,6 @@ public class GeneralFactory : MonoBehaviour, IFactory
         GameObject tileLineViewGO = Instantiate(tileLinePrefab, parent);
         return tileLineViewGO.GetComponent<ITileLineView>();
     }
-    public TileLinePresenter CreateTileLinePresenter(ITileLine tileLineModel, ITileLineView tileLineView)
-    {
-        return new TileLinePresenter(tileLineModel, tileLineView);
-    }
     public ILevelManager CreateLevelManager(TileManager tileManager)
     {
         return new LevelManager(tileManager);

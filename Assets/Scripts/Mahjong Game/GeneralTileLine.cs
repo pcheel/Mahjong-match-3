@@ -19,17 +19,19 @@ public class GeneralTileLine : ITileLine
 
     public GeneralTileLine(List<Vector2> tilesPositions)
     {
-        _tilesInLine = new List<ITile>(tilesPositions.Count);
+        _tilesInLine = new List<ITile>();
         _tilesToDelete = new List<ITile>();
         _indexes = new List<int>();
         _tilesPositions = tilesPositions;
     }
-    public void AddTileToLine(ITile tile)
+    public bool AddTileToLine(ITile tile)
     {
         if (_tilesPositions.Count == _tilesInLine.Count)
         {
+            Debug.Log("Lose");
             LoseLevelAction?.Invoke();
-            return;
+            ClearTileLine();
+            return false;
         }
 
         for (int i = _tilesInLine.Count - 1; i >= 0; i--)
@@ -44,12 +46,13 @@ public class GeneralTileLine : ITileLine
                 _tilesInLine[i + 1] = tile;
                 SortingTilesInLine();
                 CheckMatch();
-                return;
+                return true;
             }
         }
         _tilesInLine.Add(tile);
         SortingTilesInLine();
         CheckMatch();
+        return true;
     }
     public void SortingTilesInLine()
     {
@@ -57,6 +60,10 @@ public class GeneralTileLine : ITileLine
         {
             _tilesInLine[i].ChangePosition(_tilesPositions[i]);
         }
+    }
+    public void ShiftPointsLeftForSpawnWithDelay()
+    {
+        ShiftPointsForSpawn(false);
     }
 
     private void CheckMatch()
@@ -74,10 +81,6 @@ public class GeneralTileLine : ITileLine
                     _indexes.Add(i - 2);
                     DeleteMatchingTilesView(lastType);
                     ShiftPointsForSpawn(true);
-                    // for (int n = 0; n < _tilesPositions.Count; n++)
-                    // {
-                    //     Debug.Log($"pos {n}: {_tilesPositions[n]}");
-                    // }
                 }
             }
             else
@@ -93,67 +96,20 @@ public class GeneralTileLine : ITileLine
         {
             if (_tilesInLine[i].tileType == matchType)
             {
-                // ITile tile = _tilesInLine[i];
-                _tilesInLine[i].DeleteTileViewAction?.Invoke();
-                RemoveTileFromList(_tilesInLine[i]);
-
-                // RemoveTileFromList.Invoke(1f);
-                // Coroutine
-                // StartCoroutine(RemoveTileFromList(_tilesInLine[i]));
-                // _tilesInLine[i].DeleteTile();
-                // _tilesInLine.RemoveAt(i);
+                _tilesInLine[i].DeleteMatchTileViewAction?.Invoke();
+                _tilesInLine.RemoveAt(i);
             }
         }
-        // SortingTilesInLine();
-    }
-    private void RemoveTile(ITile tile)
-    {
-        // Thread.Sleep(500);
-        // tile.DeleteTileViewAction?.Invoke();
-
-        Thread.Sleep(1100);
-        ShiftPointsForSpawn(false);
-        // _tilesInLine.Remove(tile);
-        // tile.DeleteTile();
-        //подвинуть тайлы обратно
-        //снова вызвать сортировку
-    }
-    private void KillMovingTweens()
-    {
-        foreach(var tile in _tilesInLine)
-        {
-            tile.KillMovingTweensAction?.Invoke();
-        }
-    }
-    // private async void RemoveTileFromList(ITile tile)
-    // {
-    //     await Task.Run(() => RemoveTile(tile));
-    //     DOTween.KillAll();
-    //     SortingTilesInLine();
-    // }
-    private void RemoveTileFromList(ITile tile)
-    {
-        // int index = _tilesInLine.IndexOf(tile);
-        // ShiftPointsForSpawn();
-        _tilesInLine.Remove(tile);
-        Debug.Log(_tilesInLine.Count);
-        // await Task.Run(() => RemoveTile(tile));
-        // DOTween.KillAll();
-        // SortingTilesInLine();
     }
     private void ShiftPointsForSpawn(bool isRightShift)
     {
         if (isRightShift)
         {
-            Debug.Log($"index {_indexes[_indexes.Count - 1]}");
             for (int i = _indexes[_indexes.Count - 1]; i < _tilesPositions.Count; i++)
             {
                 _tilesPositions[i] += new Vector2(3 * DISTANCE_BETWEEN_TILES_IN_LINE, 0f);
-                Debug.Log("shift");
             }
             SortingTilesInLine();
-            Debug.Log("RightShift");
-            // await Task.Run(() => ShiftPointsForSpawnWithDelay(false));
         }
         else
         {
@@ -164,12 +120,14 @@ public class GeneralTileLine : ITileLine
                 _tilesPositions[i] -= new Vector2(3 * DISTANCE_BETWEEN_TILES_IN_LINE, 0f);
             }
             SortingTilesInLine();
-            Debug.Log("LeftShift");
         }
     }
-    public void ShiftPointsLeftForSpawnWithDelay()
+    private void ClearTileLine()
     {
-        // Thread.Sleep(1200);
-        ShiftPointsForSpawn(false);
+        foreach(var tile in _tilesInLine)
+        {
+            tile.DeleteTileViewAction?.Invoke();
+        }
+        _tilesInLine.Clear();
     }
 }

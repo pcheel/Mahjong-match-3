@@ -4,32 +4,37 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
+    [Header("Prefabs")]
     [SerializeField] private GameObject _factoryPrefab;
     [SerializeField] private GameObject _tilePrefab;
     [SerializeField] private GameObject _tilesLinePrefab;
+    [Header("Sprites")]
     [SerializeField] private Sprite _gearIcon;
     [SerializeField] private Sprite _heartIcon;
     [SerializeField] private Sprite _hexagonIcon;
     [SerializeField] private Sprite _starIcon;
+    [Header("Values")]
     [SerializeField] private Vector2 _tileLinePosition;
     [SerializeField] private List<Vector2> _linePoints;
+    [Header("Dependencies")]
     [SerializeField] private ResultPanel _resultPanel;
-    // [SerializeField] private LevelManager _levelManager;
 
     private LevelData _levelData;
     private IFactory _factory;
     private ILevelManager _levelManager;
     private List<List<ITile>> _tilesOnMap;
-    // private List<ITile> _tilesInLine;
     private ITileLine _tileLine;
     private List<TileTypes> _allTypes;
     private const float HALF_TILE_SIZE = 0.5f;
 
     public void AddTileToLine(ITile tile)
     {
-        _tileLine.AddTileToLine(tile);
-        _tilesOnMap[tile.layer].Remove(tile);
-        _levelManager.CheckWinLevel(_tilesOnMap);
+        bool isCorrect = _tileLine.AddTileToLine(tile);
+        if(isCorrect)
+        {
+            _tilesOnMap[tile.layer].Remove(tile);
+            _levelManager.CheckWinLevel(_tilesOnMap);
+        }
     }
     public void LoadLevel(LevelData levelData)
     {
@@ -59,14 +64,14 @@ public class TileManager : MonoBehaviour
                 return null;
         }
     }
-    // public void DeleteTileF
 
     private void CreateAndInitializeTileLine()
     {
         _tileLine = _factory.CreateTileLineModel(_linePoints);
         ITileLineView tileLineView = _factory.CreateTileLineView(_tilesLinePrefab, transform.parent);
         tileLineView.SetPosition(_tileLinePosition);
-        // TileLinePresenter tileLinePresenter = _factory.CreateTileLinePresenter(_tileLine, tileLineView);
+        _tileLine.LoseLevelAction += _resultPanel.ShowLosePanel;
+        _tileLine.LoseLevelAction += ClearTileMap;
     }
     private void CreateAllTiles()
     {
@@ -152,13 +157,28 @@ public class TileManager : MonoBehaviour
         }
         _tilesOnMap[i][j].SetDownTiles(downTiles);
     }
+    private void ClearTileMap()
+    {
+        for (int i = 0; i < _tilesOnMap.Count; i++)
+        {
+            for (int j = 0; j < _tilesOnMap[i].Count; j++)
+            {
+                _tilesOnMap[i][j].DeleteTileViewAction?.Invoke();
+            }
+        }
+
+        for (int i = 0; i < _tilesOnMap.Count; i++)
+        {
+            _tilesOnMap[i].Clear();
+        }
+        _tilesOnMap.Clear();
+    }
     private void Start() 
     {
         _levelManager = _factory.CreateLevelManager(this);
         _levelManager.WinLevelAction += _resultPanel.ShowWinPanel;
-        _tileLine.LoseLevelAction += _resultPanel.ShowLosePanel;
-        _resultPanel.nextLevelButton.onClick.AddListener(_levelManager.ReplayLevel);
-        _resultPanel.replayButton.onClick.AddListener(_levelManager.PlayNextLevel);
+        _resultPanel.replayButton.onClick.AddListener(_levelManager.ReplayLevel);
+        _resultPanel.nextLevelButton.onClick.AddListener(_levelManager.PlayNextLevel);
     }
     private void Awake() 
     {
@@ -168,6 +188,8 @@ public class TileManager : MonoBehaviour
     private void OnDisable()
     {
         _levelManager.WinLevelAction -= _resultPanel.ShowWinPanel;
+        _tileLine.LoseLevelAction -= _resultPanel.ShowLosePanel;
+        _tileLine.LoseLevelAction -= ClearTileMap;
         _resultPanel.nextLevelButton.onClick.RemoveListener(_levelManager.PlayNextLevel);
         _resultPanel.replayButton.onClick.RemoveListener(_levelManager.ReplayLevel);
     }

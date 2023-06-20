@@ -16,14 +16,12 @@ public class Tile : ITile
     public Vector2 position => _position;
     public List<ITile> topTiles => _topTiles;
     public TileTypes tileType => _type;
-    public bool isLocked => _isLocked;
     public int layer => _layer;
-    // public List<ITile> downTiles => _downTiles;
     public Action<Vector2, int, Sprite> InitializeAction {get;set;}
     public Action<bool> ChangeTopTilesCountAction {get;set;}
     public Action<Vector2> ChangePositionAction {get;set;}
     public Action DeleteTileViewAction {get;set;}
-    public Action KillMovingTweensAction {get;set;}
+    public Action DeleteMatchTileViewAction {get;set;}
 
     public Tile()
     {
@@ -50,7 +48,6 @@ public class Tile : ITile
     public void SetTopTiles(List<ITile> topTiles)
     {
         _topTiles = topTiles;
-        // ChangeTopTilesCount();
     }
     public void SetDownTiles(List<ITile> downTiles)
     {
@@ -70,15 +67,6 @@ public class Tile : ITile
     {
         _tileManager.ShiftLine();
     }
-    // public void DeleteTile()
-    // {
-    //     // DeleteTileVAction?.Invoke();
-    //     _tileManager.SortingTileLine();
-    // }
-    // public void KillMovingTweens()
-    // {
-    //     KillMovingTweensAction?.Invoke();
-    // }
 
     private void DeleteTileFromDownTiles()
     {

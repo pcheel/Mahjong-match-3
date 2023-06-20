@@ -47,8 +47,11 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
     }
     public void DeleteTileView()
     {
+        Destroy(this.gameObject);
+    }
+    public void DeleteMatchTileView()
+    {
         StartCoroutine(DeleteTile());
-        // DOTween.Sequence().Append(transform.DOScale(1.2f, 0.3f).SetDelay(0.5f)).Append(transform.DOScale(1.0f, 0.3f).OnComplete(()=>DeleteTile()));
         DOTween.Sequence().Append(transform.DOScale(1.2f, 0.3f).SetDelay(0.5f)).Append(transform.DOScale(1.0f, 0.3f).OnComplete(() => EndOfDeleteMatchTiles()));
     }
     

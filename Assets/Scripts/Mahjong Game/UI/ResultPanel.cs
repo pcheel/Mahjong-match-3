@@ -6,12 +6,13 @@ using TMPro;
 
 public class ResultPanel : MonoBehaviour
 {
+    [Header("Values")]
+    [SerializeField] private string _loseText;
+    [SerializeField] private string _winText;
+    [Header("Dependencies")]
     [SerializeField] private TMP_Text _resultText;
     [SerializeField] private Button _replayButton;
     [SerializeField] private Button _nextLevelButton;
-    [SerializeField] private string _loseText;
-    [SerializeField] private string _winText;
-    // [SerializeField] private TileManager _tileManager;
 
     public Button replayButton => _replayButton;
     public Button nextLevelButton => _nextLevelButton;
@@ -22,6 +23,7 @@ public class ResultPanel : MonoBehaviour
     }
     public void ShowLosePanel()
     {
+        Debug.Log("showLosePanel");
         Invoke("LosePanel", 1f);
     }
 
@@ -44,8 +46,4 @@ public class ResultPanel : MonoBehaviour
         _nextLevelButton.onClick.AddListener(() => transform.GetChild(0).gameObject.SetActive(false));
         _replayButton.onClick.AddListener(() => transform.GetChild(0).gameObject.SetActive(false));
     }
-    // private void OnEnable()
-    // {
-    //     _nextLevelButton.onClick.AddListener(WinPanel);
-    // }
 }

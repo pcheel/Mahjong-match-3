@@ -6,7 +6,7 @@ using System;
 public interface ITileLine
 {
     public Action LoseLevelAction {get;set;}
-    public void AddTileToLine(ITile tile);
+    public bool AddTileToLine(ITile tile);
     public void SortingTilesInLine();
     public void ShiftPointsLeftForSpawnWithDelay();
 }

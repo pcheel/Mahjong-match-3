@@ -20,9 +20,4 @@ public class TileLayerData
 public class TileData
 {
     public Vector2 position;
-    // public TileTypes type;
-    // public Sprite icon;
-    // public int id;
-    // public List<int> topTilesID;
-    // public List<int> downTilesID;
 }
