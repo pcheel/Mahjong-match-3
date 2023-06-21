@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
@@ -9,16 +8,21 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
 {
     [SerializeField] private GameObject _darkPanelGO;
     [SerializeField] private SpriteRenderer _spriteRendererIcon;
+
+    private TilePresenter _tilePresenter;
     private SpriteRenderer _spriteRenderer;
     private SpriteRenderer _spriteRendererPanel;
-    // private int _matchTilesCounter;
+    private const float DURATION_OF_MOVEMENT_ANIMATION = 0.5f;
+    private const float DURATION_OF_DEATH_ANIMATION = 0.6f;
+
     public static int _matchTilesCounter;
 
     public Action TapOnTileAction {get;set;}
     public Action EndOfDeleteTileAction {get;set;}
 
-    public void InitializeTileView(Vector2 position, int layer, Sprite icon)
+    public void InitializeTileView(TilePresenter tilePresenter, Vector2 position, int layer, Sprite icon)
     {
+        _tilePresenter = tilePresenter;
         Vector3 newPosition = new Vector3(position.x, position.y, 0f);
         _spriteRendererIcon.sprite = icon;
         _spriteRenderer.sortingOrder = 2 * layer + 5;
@@ -28,18 +32,19 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
     }
     public void ChangeLockState(bool isLocked)
     {
-        if (isLocked)
-        {
-            _darkPanelGO.SetActive(true);
-        }
-        else
-        {
-            _darkPanelGO.SetActive(false);
-        }
+        _darkPanelGO.SetActive(isLocked);
+    }
+    public void OnEnable()
+    {
+        _tilePresenter?.Enable();
+    }
+    public void OnDisable()
+    {
+        _tilePresenter?.Disable();
     }
     public void MoveTileToNewPosition(Vector2 newPosition)
     {
-        transform.DOLocalMove(newPosition, 0.5f);
+        transform.DOLocalMove(newPosition, DURATION_OF_MOVEMENT_ANIMATION);
     }
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -51,13 +56,15 @@ public class TileView : MonoBehaviour, ITileView, IPointerClickHandler
     }
     public void DeleteMatchTileView()
     {
-        StartCoroutine(DeleteTile());
-        DOTween.Sequence().Append(transform.DOScale(1.2f, 0.3f).SetDelay(0.5f)).Append(transform.DOScale(1.0f, 0.3f).OnComplete(() => EndOfDeleteMatchTiles()));
+        StartCoroutine(DeleteTileWithDelay());
+        DOTween.Sequence()
+            .Append(transform.DOScale(1.2f, DURATION_OF_DEATH_ANIMATION / 2).SetDelay(DURATION_OF_MOVEMENT_ANIMATION))
+            .Append(transform.DOScale(1.0f, DURATION_OF_DEATH_ANIMATION / 2).OnComplete(() => EndOfDeleteMatchTiles()));
     }
     
-    private IEnumerator DeleteTile()
+    private IEnumerator DeleteTileWithDelay()
     {
-        yield return new WaitForSeconds(1.1f);
+        yield return new WaitForSeconds(DURATION_OF_DEATH_ANIMATION + DURATION_OF_MOVEMENT_ANIMATION);
         Destroy(this.gameObject);
     }
     private void EndOfDeleteMatchTiles()

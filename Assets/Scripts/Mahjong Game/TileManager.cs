@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,14 +26,10 @@ public class TileManager : MonoBehaviour
     private List<TileTypes> _allTypes;
     private const float HALF_TILE_SIZE = 0.5f;
 
-    public void AddTileToLine(ITile tile)
+    public void RemoveTileFromMapAndCheckWinLevel(ITile tile)
     {
-        bool isCorrect = _tileLine.AddTileToLine(tile);
-        if(isCorrect)
-        {
-            _tilesOnMap[tile.layer].Remove(tile);
-            _levelManager.CheckWinLevel(_tilesOnMap);
-        }
+        _tilesOnMap[tile.layer].Remove(tile);
+        _levelManager.CheckWinLevel(_tilesOnMap);
     }
     public void LoadLevel(LevelData levelData)
     {
@@ -43,10 +38,6 @@ public class TileManager : MonoBehaviour
         CreateAllTypes();
         CreateAllTiles();
         SetTopAndDownTiles();
-    }
-    public void ShiftLine()
-    {
-        _tileLine.ShiftPointsLeftForSpawnWithDelay();
     }
     public Sprite GetTileIcon(TileTypes type)
     {
@@ -67,7 +58,7 @@ public class TileManager : MonoBehaviour
 
     private void CreateAndInitializeTileLine()
     {
-        _tileLine = _factory.CreateTileLineModel(_linePoints);
+        _tileLine = _factory.CreateTileLineModel(_linePoints, this);
         ITileLineView tileLineView = _factory.CreateTileLineView(_tilesLinePrefab, transform.parent);
         tileLineView.SetPosition(_tileLinePosition);
         _tileLine.LoseLevelAction += _resultPanel.ShowLosePanel;
@@ -86,12 +77,11 @@ public class TileManager : MonoBehaviour
     }
     private ITile CreateAndInitializeTile(TileData data, int layer)
     {
-        ITile tileModel = _factory.CreateTileModel();
-        ITileView tileView = _factory.CreateTileView(_tilePrefab, transform);
-        TilePresenter tilePretender = _factory.CreateTilePresenter(tileModel, tileView);
         TileTypes type = _allTypes[Random.Range(0, _allTypes.Count)];
         _allTypes.Remove(type);
-        tileModel.Initialize(data, layer, type, this);
+        ITile tileModel = _factory.CreateTileModel();
+        ITileView tileView = _factory.CreateTileView(_tilePrefab, transform);
+        TilePresenter tilePretender = _factory.CreateTilePresenter(tileModel, tileView, _tileLine, data.position, layer, type, this);
         return tileModel;
     }
     private void CreateAllTypes()
@@ -163,7 +153,7 @@ public class TileManager : MonoBehaviour
         {
             for (int j = 0; j < _tilesOnMap[i].Count; j++)
             {
-                _tilesOnMap[i][j].DeleteTileViewAction?.Invoke();
+                _tilesOnMap[i][j].DeleteTileViewAction?.Invoke(false);
             }
         }
 

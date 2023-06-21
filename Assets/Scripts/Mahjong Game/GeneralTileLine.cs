@@ -1,9 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
 using UnityEngine;
-using DG.Tweening;
 using System;
 
 public class GeneralTileLine : ITileLine
@@ -12,26 +8,27 @@ public class GeneralTileLine : ITileLine
     private List<ITile> _tilesToDelete;
     private List<Vector2> _tilesPositions;
     private List<int> _indexes;
+    private TileManager _tileManager;
     private const int MATCH_NUMBER = 3;
     private const float DISTANCE_BETWEEN_TILES_IN_LINE = 1.11f;
 
     public Action LoseLevelAction {get;set;}
 
-    public GeneralTileLine(List<Vector2> tilesPositions)
+    public GeneralTileLine(List<Vector2> tilesPositions, TileManager tileManager)
     {
         _tilesInLine = new List<ITile>();
         _tilesToDelete = new List<ITile>();
         _indexes = new List<int>();
         _tilesPositions = tilesPositions;
+        _tileManager = tileManager;
     }
-    public bool AddTileToLine(ITile tile)
+    public void AddTileToLine(ITile tile)
     {
         if (_tilesPositions.Count == _tilesInLine.Count)
         {
-            Debug.Log("Lose");
             LoseLevelAction?.Invoke();
             ClearTileLine();
-            return false;
+            return;
         }
 
         for (int i = _tilesInLine.Count - 1; i >= 0; i--)
@@ -44,17 +41,14 @@ public class GeneralTileLine : ITileLine
                     _tilesInLine[j] = _tilesInLine[j - 1];
                 }
                 _tilesInLine[i + 1] = tile;
-                SortingTilesInLine();
-                CheckMatch();
-                return true;
+                HandleAfterAppendTileToTileline(tile);
+                return;
             }
         }
         _tilesInLine.Add(tile);
-        SortingTilesInLine();
-        CheckMatch();
-        return true;
+        HandleAfterAppendTileToTileline(tile);
     }
-    public void SortingTilesInLine()
+    public void ChangeTilePositions()
     {
         for (int i = 0; i < _tilesInLine.Count; i++)
         {
@@ -79,7 +73,7 @@ public class GeneralTileLine : ITileLine
                 {
                     matchCounter = 0;
                     _indexes.Add(i - 2);
-                    DeleteMatchingTilesView(lastType);
+                    DeleteMatchingTileViews(lastType);
                     ShiftPointsForSpawn(true);
                 }
             }
@@ -90,13 +84,13 @@ public class GeneralTileLine : ITileLine
             }
         }
     }
-    private void DeleteMatchingTilesView(TileTypes matchType)
+    private void DeleteMatchingTileViews(TileTypes matchType)
     {
         for (int i = _tilesInLine.Count - 1; i >= 0; i--)
         {
             if (_tilesInLine[i].tileType == matchType)
             {
-                _tilesInLine[i].DeleteMatchTileViewAction?.Invoke();
+                _tilesInLine[i].DeleteTileViewAction?.Invoke(true);
                 _tilesInLine.RemoveAt(i);
             }
         }
@@ -109,7 +103,6 @@ public class GeneralTileLine : ITileLine
             {
                 _tilesPositions[i] += new Vector2(3 * DISTANCE_BETWEEN_TILES_IN_LINE, 0f);
             }
-            SortingTilesInLine();
         }
         else
         {
@@ -119,14 +112,20 @@ public class GeneralTileLine : ITileLine
             {
                 _tilesPositions[i] -= new Vector2(3 * DISTANCE_BETWEEN_TILES_IN_LINE, 0f);
             }
-            SortingTilesInLine();
         }
+        ChangeTilePositions();
+    }
+    private void HandleAfterAppendTileToTileline(ITile tile)
+    {
+        ChangeTilePositions();
+        CheckMatch();
+        _tileManager.RemoveTileFromMapAndCheckWinLevel(tile);
     }
     private void ClearTileLine()
     {
         foreach(var tile in _tilesInLine)
         {
-            tile.DeleteTileViewAction?.Invoke();
+            tile.DeleteTileViewAction?.Invoke(false);
         }
         _tilesInLine.Clear();
     }

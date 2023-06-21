@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
 
 public interface ITileLine
 {
     public Action LoseLevelAction {get;set;}
-    public bool AddTileToLine(ITile tile);
-    public void SortingTilesInLine();
+    public void AddTileToLine(ITile tile);
+    public void ChangeTilePositions();
     public void ShiftPointsLeftForSpawnWithDelay();
 }

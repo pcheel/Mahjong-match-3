@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -17,9 +16,8 @@ public class LevelManager : ILevelManager
     {
         _completedLevels = new List<LevelData>();
         _uncompletedLevels = new List<LevelData>();
-        _levels = new List<LevelData>(Resources.LoadAll<LevelData>($"LevelDatas/"));
-        _uncompletedLevels = _levels;
         _tileManager = tileManager;
+        LoadAndSetLevelsData();
         RandomAndStartLevel();
     }
     public void ReplayLevel()
@@ -37,11 +35,11 @@ public class LevelManager : ILevelManager
         }
         RandomAndStartLevel();
     }
-    public void CheckWinLevel(List<List<ITile>> tiles)
+    public void CheckWinLevel(List<List<ITile>> tilesOnMap)
     {
-        foreach (var listOfTiles in tiles)
+        foreach (var layerOfTiles in tilesOnMap)
         {
-            if (listOfTiles.Count > 0)
+            if (layerOfTiles.Count > 0)
             {
                 return;
             }
@@ -54,5 +52,10 @@ public class LevelManager : ILevelManager
         int randomLevel = UnityEngine.Random.Range(0, _uncompletedLevels.Count);
         _currentLevel = _uncompletedLevels[randomLevel];
         _tileManager.LoadLevel(_currentLevel);
+    }
+    private void LoadAndSetLevelsData()
+    {
+        _levels = new List<LevelData>(Resources.LoadAll<LevelData>($"LevelDatas/"));
+        _uncompletedLevels = _levels;
     }
 }

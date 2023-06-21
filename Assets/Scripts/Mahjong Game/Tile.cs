@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 
 public class Tile : ITile
 {
-    private TileManager _tileManager;
+    private ITileLine _tileLine;
     private List<ITile> _topTiles;
     private List<ITile> _downTiles;
     private Vector2 _position;
@@ -17,11 +16,9 @@ public class Tile : ITile
     public List<ITile> topTiles => _topTiles;
     public TileTypes tileType => _type;
     public int layer => _layer;
-    public Action<Vector2, int, Sprite> InitializeAction {get;set;}
     public Action<bool> ChangeTopTilesCountAction {get;set;}
     public Action<Vector2> ChangePositionAction {get;set;}
-    public Action DeleteTileViewAction {get;set;}
-    public Action DeleteMatchTileViewAction {get;set;}
+    public Action<bool> DeleteTileViewAction {get;set;}
 
     public Tile()
     {
@@ -30,20 +27,21 @@ public class Tile : ITile
     }
     public void Activate()
     {
-        if (!_isLocked)
+        if (_isLocked)
         {
-            _isLocked = true;
-            DeleteTileFromDownTiles();
-            _tileManager.AddTileToLine(this);
+            return;
         }
+
+        _isLocked = true;
+        DeleteTileFromDownTiles();
+        _tileLine.AddTileToLine(this);
     }
-    public void Initialize(TileData data, int layer, TileTypes type, TileManager tileManager)
+    public void Initialize(Vector2 position, int layer, TileTypes type, ITileLine tileLine)
     {
-        _position = data.position;
+        _position = position;
         _layer = layer;
-        _tileManager = tileManager;
         _type = type;
-        InitializeAction?.Invoke(_position, layer, _tileManager.GetTileIcon(_type));
+        _tileLine = tileLine;
     }
     public void SetTopTiles(List<ITile> topTiles)
     {
@@ -65,7 +63,7 @@ public class Tile : ITile
     }
     public void EndOfTileDelete()
     {
-        _tileManager.ShiftLine();
+        _tileLine.ShiftPointsLeftForSpawnWithDelay();
     }
 
     private void DeleteTileFromDownTiles()

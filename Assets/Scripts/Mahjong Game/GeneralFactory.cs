@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,13 +12,13 @@ public class GeneralFactory : MonoBehaviour, IFactory
         GameObject tileGO = Instantiate(tilePrefab, parent);
         return tileGO.GetComponent<ITileView>();
     }
-    public TilePresenter CreateTilePresenter(ITile tileModel, ITileView tileView)
+    public TilePresenter CreateTilePresenter(ITile tileModel, ITileView tileView, ITileLine tileLine, Vector2 position, int layer, TileTypes type, TileManager tileManager)
     {
-        return new TilePresenter(tileModel, tileView);
+        return new TilePresenter(tileModel, tileView, tileLine, position, layer, type, tileManager);
     }
-    public ITileLine CreateTileLineModel(List<Vector2> linePoints)
+    public ITileLine CreateTileLineModel(List<Vector2> linePoints, TileManager tileManager)
     {
-        return new GeneralTileLine(linePoints);
+        return new GeneralTileLine(linePoints, tileManager);
     }
     public ITileLineView CreateTileLineView(GameObject tileLinePrefab, Transform parent)
     {
