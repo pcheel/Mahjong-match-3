@@ -1270,6 +1270,7 @@ MonoBehaviour:
   _resultText: {fileID: 1583155891}
   _replayButton: {fileID: 1564181527}
   _nextLevelButton: {fileID: 654138004}
+  _panelGO: {fileID: 1028353443}
 --- !u!1 &2058746269
 GameObject:
   m_ObjectHideFlags: 0

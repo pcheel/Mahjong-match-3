@@ -29,4 +29,17 @@ public class GeneralFactory : MonoBehaviour, IFactory
     {
         return new LevelManager(tileManager);
     }
+    public ILevelMap CreateLevelMapModel()
+    {
+        return new GeneralLevelMap();
+    }
+    public ILevelMapView CreateLevelMapView(GameObject levelMapPrefab, Transform parent)
+    {
+        GameObject levelMapGO = Instantiate(levelMapPrefab, parent);
+        return levelMapGO.GetComponent<ILevelMapView>();
+    }
+    public LevelMapPresenter CreateLevelMapPresenter(ILevelMap levelMap, ILevelMapView levelMapView)
+    {
+        return new LevelMapPresenter(levelMap, levelMapView);
+    }
 }
