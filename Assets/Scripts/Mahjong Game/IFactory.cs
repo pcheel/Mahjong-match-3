@@ -9,7 +9,10 @@ public interface IFactory
     public ITileLine CreateTileLineModel(List<Vector2> linePoints, TileManager tileManager);
     public ITileLineView CreateTileLineView(GameObject tileLinePrefab, Transform parent);
     public ILevelManager CreateLevelManager(TileManager tileManager);
-    public ILevelMap CreateLevelMapModel();
+    public ILevelMap CreateLevelMapModel(LevelCreatorManager levelCreatorManager ,IFactory factory, GameObject tilePointPrefab);
     public ILevelMapView CreateLevelMapView(GameObject levelMapPrefab, Transform parent);
     public LevelMapPresenter CreateLevelMapPresenter(ILevelMap levelMap, ILevelMapView _levelMapView);
+    public ITilePoint CreateTilePointModel();
+    public ITilePointView CreateTilePointView(GameObject tilePointPrefab, Transform parent);
+    public TilePointPresenter CreateTilePointPresenter(ITilePoint tilePoint, ITilePointView tilePointView, Vector2 position);
 }

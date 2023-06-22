@@ -29,9 +29,9 @@ public class GeneralFactory : MonoBehaviour, IFactory
     {
         return new LevelManager(tileManager);
     }
-    public ILevelMap CreateLevelMapModel()
+    public ILevelMap CreateLevelMapModel(LevelCreatorManager levelCreatorManager ,IFactory factory, GameObject tilePointPrefab)
     {
-        return new GeneralLevelMap();
+        return new GeneralLevelMap(levelCreatorManager, factory, tilePointPrefab);
     }
     public ILevelMapView CreateLevelMapView(GameObject levelMapPrefab, Transform parent)
     {
@@ -41,5 +41,18 @@ public class GeneralFactory : MonoBehaviour, IFactory
     public LevelMapPresenter CreateLevelMapPresenter(ILevelMap levelMap, ILevelMapView levelMapView)
     {
         return new LevelMapPresenter(levelMap, levelMapView);
+    }
+    public ITilePoint CreateTilePointModel()
+    {
+        return new GeneralTilePoint();
+    }
+    public ITilePointView CreateTilePointView(GameObject tilePointPrefab, Transform parent)
+    {
+        GameObject tilePointGO = Instantiate(tilePointPrefab, parent);
+        return tilePointGO.GetComponent<ITilePointView>();
+    }
+    public TilePointPresenter CreateTilePointPresenter(ITilePoint tilePoint, ITilePointView tilePointView, Vector2 position)
+    {
+        return new TilePointPresenter(tilePoint, tilePointView, position);
     }
 }
